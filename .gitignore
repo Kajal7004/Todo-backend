@@ -35,5 +35,4 @@ coverage/
 *.temp
 
 # Lock files (optional if you don’t want to track them)
-package-lock.json
 yarn.lock
