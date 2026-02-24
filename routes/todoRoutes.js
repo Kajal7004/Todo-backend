@@ -10,6 +10,8 @@ router.post("/", auth, async (req, res) => {
     console.log("req",req.body);
     const todo = new Todo({
       title: req.body.title,
+      description: req.body.description,
+      type: req.body.type,
       userId: req.user.id
     });
 

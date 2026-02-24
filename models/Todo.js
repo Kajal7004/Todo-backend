@@ -6,6 +6,13 @@ const todoSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  description: {
+    type: String,
+  },
+  type: {
+    type: String,
+    required: true
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"

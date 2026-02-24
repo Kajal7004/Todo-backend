@@ -29,7 +29,7 @@ router.post("/register", async (req, res) => {
 
     res.json({ message: "User registered successfully" });
   } catch (error) {
-    console.log("REGISTER ERROR 👉", error);
+    console.log("REGISTER ERROR ", error);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -57,14 +57,14 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
-      { expiresIn: "2m" }
+      { expiresIn: "2h" }
     );
 
     //Refresh Token
     const ref_token = jwt.sign(
       { id: user._id },
       process.env.JWT_REFRESH_SECRET,
-      { expiresIn: "10m"}
+      { expiresIn: "1d"}
     );
 
     res.json({ 
