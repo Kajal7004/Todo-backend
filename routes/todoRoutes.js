@@ -23,15 +23,40 @@ router.post("/", auth, async (req, res) => {
   }
 });
 
-// Get Todos
+// search Todos
 router.get("/", auth, async (req, res) => {
   try {
-    const todos = await Todo.find({ userId: req.user.id });
+    const { search } = req.query; // 1. Extract the search term from the URL
+    
+    // 2. Start with the basic filter (user-specific)
+    let query = { userId: req.user.id };
+
+    // 3. If there is a search term, add the 'OR' filter for title or description
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },       // "i" means case-insensitive
+        { description: { $regex: search, $options: "i" } }
+      ];
+    }
+
+    const todos = await Todo.find(query);
     res.json(todos);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Server error" });
+
   }
-});
+})
+
+// Get Todos
+// router.get("/", auth, async (req, res) => {
+//   try {
+//     const todos = await Todo.find({ userId: req.user.id });
+//     res.json(todos);
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
 
 router.get("/test", auth, async (req, res) => {
   try {
