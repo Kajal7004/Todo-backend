@@ -27,6 +27,9 @@ router.post("/", auth, async (req, res) => {
 router.get("/", auth, async (req, res) => {
   try {
     const { search } = req.query; // 1. Extract the search term from the URL
+
+    const page = parseInt(req.query.page) || 1;
+    const perPage = 4;
     
     // 2. Start with the basic filter (user-specific)
     let query = { userId: req.user.id };
@@ -39,8 +42,22 @@ router.get("/", auth, async (req, res) => {
       ];
     }
 
-    const todos = await Todo.find(query);
-    res.json(todos);
+    const totalTask = await Todo.countDocuments(query);   
+    const totalPages = Math.ceil(totalTask/perPage) || 1;  //math.ceil coverts decimal to integer
+   
+
+    if (page > totalPages && totalTask > 0) {
+      return res.status(404).json ({message: "Page not found"});
+    }
+
+    const todos = await Todo.find(query) 
+    .skip((page-1) * perPage)
+    .limit(perPage)
+    .sort({ createdAt: -1 }) // Good practice: show newest first
+    .exec();
+    res.json({todos,totalPages,page, totalTask});
+
+
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server error" });
